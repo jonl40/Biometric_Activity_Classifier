@@ -53,5 +53,16 @@ x: x axis of sensor
 y: y axis of sensor   
 z: z axis of sensor   
 
-# Data Set Used / link to study   
+# Data Set Used   
 https://archive.ics.uci.edu/ml/datasets/WISDM+Smartphone+and+Smartwatch+Activity+and+Biometrics+Dataset+
+
+# References  
+
+https://colab.research.google.com/github/arduino/ArduinoTensorFlowLiteTutorials/blob/master/GestureToEmoji/arduino_tinyml_workshop.ipynb  
+
+https://blog.tensorflow.org/2019/11/how-to-get-started-with-machine.html  
+
+https://towardsdatascience.com/understanding-the-confusion-matrix-from-scikit-learn-c51d88929c79  
+
+https://en.wikipedia.org/wiki/Feature_scaling  
+
