@@ -5,10 +5,10 @@ Inertial measurement unit (IMU) data consists of accelerometer and gyroscope on 
 ## SVM Results  
 
 ### Confusion matrix: activity classifier from phone biometric data    
-![confusion_matrix_phone](https://user-images.githubusercontent.com/33404359/155634384-4b05680d-8d2b-495f-85a6-e847cddf93d5.png)
+![confusion_matrix_phone](https://user-images.githubusercontent.com/33404359/156106066-25423b3b-d110-4d98-a83f-fab1a3936136.png)
 
 ### Confusion matrix: activity classifier from smartwatch biometric data    
-![confusion_matrix_watch](https://user-images.githubusercontent.com/33404359/155634392-6246c777-4102-49e6-9ea7-00d6eff5352c.png)
+![confusion_matrix_watch](https://user-images.githubusercontent.com/33404359/156106079-85e3cf51-7cce-4059-b498-658789886dd5.png)
 
 ## Analysis of phone biometric data   
 
