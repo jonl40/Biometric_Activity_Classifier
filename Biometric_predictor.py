@@ -35,6 +35,7 @@ THEME = "plotly"
 
 DIR = "raw/"
 GRAPH_DIR = "graphs/"
+MODEL_DIR = "models/"
 ACCEL_P_DATA_1600 = DIR + "data_1600_accel_phone.txt"
 GYRO_P_DATA_1600 = DIR + "data_1600_gyro_phone.txt"
 ACCEL_W_DATA_1600 = DIR + "data_1600_accel_watch.txt"
@@ -42,8 +43,8 @@ GYRO_W_DATA_1600 = DIR + "data_1600_gyro_watch.txt"
 
 ACCEL_COLS = ["Subject-id", "ActivityLabel", "Timestamp", "x_acc", "y_acc", "z_acc"]
 GYRO_COLS = ["Subject-id", "ActivityLabel", "Timestamp", "x_gyro", "y_gryo", "z_gyro"]
-MODEL_P_NAME = "svm_phone.sav"
-MODEL_W_NAME = "svm_watch.sav"
+MODEL_P_NAME = MODEL_DIR + "svm_phone.sav"
+MODEL_W_NAME = MODEL_DIR + "svm_watch.sav"
 
 ACT_DICT = {"A": "walking", "B": "jogging", "C": "stairs", "D": "sitting", "E": "standing", 
             "F": "typing", "G": "teeth", "H": "soup", "I": "chips", "J": "pasta", "K": "drinking",
@@ -308,7 +309,7 @@ class plotter:
         acc = metrics.accuracy_score(np.argmax(outputs_test, axis=1), np.argmax(pred, axis=1))
 
         # save model
-        model.save(''.join([device, "_model.h5"]))
+        model.save(''.join([MODEL_DIR, device, "_model.h5"]))
 
         df_history = pd.DataFrame.from_dict(history.history)
 
