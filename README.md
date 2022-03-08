@@ -2,6 +2,19 @@
 Physical activity classification of biometric (IMU) data using machine learning   
 Inertial measurement unit (IMU) data consists of accelerometer and gyroscope on x, y, z axises
 
+## Neural Network  
+
+### Confusion matrix: activity classifier from phone biometric data   
+![confusion_matrix_neural_net_Phone](https://user-images.githubusercontent.com/33404359/156284410-97cc29b5-487a-4330-9819-9cdf35f4b8c4.png)
+
+### Phone Neural Network Accuracy  
+
+![Phone_Accuracy](https://user-images.githubusercontent.com/33404359/156284947-cb982306-2073-469d-b3a0-d942a543b44b.png)
+
+### Phone Neural Network Loss  
+
+![Phone_Loss](https://user-images.githubusercontent.com/33404359/156284593-b11f0bd4-6d60-4367-b09d-8d89c01cd485.png)
+
 ## SVM Results  
 
 ### Confusion matrix: activity classifier from phone biometric data    
