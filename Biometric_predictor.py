@@ -74,24 +74,24 @@ class plotter:
         self.preprocess_df()
 
 
+    def helper_preprocess(self, df, col_headers, last_col):
+        # set columns
+        df.columns = col_headers
+        # remove ';' from last column
+        df[last_col] = df[last_col].str.rstrip(";")
+        # convert data to numeric 
+        df[df.columns[3:]] = df[df.columns[3:]].apply(lambda x: pd.to_numeric(x, errors='coerce')).dropna()
+        df["Timestamp"] = pd.to_datetime(df["Timestamp"], unit='s', errors='coerce') 
+
+        return df 
+
+
     def preprocess_df(self):
         if self.accel_txt:
-            # set columns
-            self.accel_df.columns = self.acc_col
-            # remove ';' from last column
-            self.accel_df["z_acc"] = self.accel_df["z_acc"].str.rstrip(";")
-            # convert acceleration data to numeric 
-            self.accel_df[self.accel_df.columns[3:]] = self.accel_df[self.accel_df.columns[3:]].apply(lambda x: pd.to_numeric(x, errors='coerce')).dropna()
-            self.accel_df["Timestamp"] = pd.to_datetime(self.accel_df["Timestamp"], unit='s', errors='coerce') 
+            self.accel_df = self.helper_preprocess(self.accel_df, self.acc_col, "z_acc")
         
         if self.gyro_txt:
-            # set columns
-            self.gyro_df.columns = self.gyro_col
-            # remove ';' from last column
-            self.gyro_df["z_gyro"] = self.gyro_df["z_gyro"].str.rstrip(";")
-            # convert acceleration data to numeric 
-            self.gyro_df[self.gyro_df.columns[3:]] = self.gyro_df[self.gyro_df.columns[3:]].apply(lambda x: pd.to_numeric(x, errors='coerce')).dropna()
-            self.gyro_df["Timestamp"] = pd.to_datetime(self.gyro_df["Timestamp"], unit='s', errors='coerce') 
+            self.gyro_df = self.helper_preprocess(self.gyro_df, self.gyro_col, "z_gyro")
         
         # combine accel and gyro data into one df  
         if self.accel_txt and self.gyro_txt:
@@ -112,7 +112,7 @@ class plotter:
         
         fig.show()
         name = ''.join([ACT_DICT[act], "_", sensor])
-        # fig.write_html(''.join([GRAPH_DIR, name, ".html"]))
+        fig.write_html(''.join([GRAPH_DIR, name, ".html"]))
         fig.write_image(''.join([GRAPH_DIR, name, ".png"]), width=WIDTH_IMG, height=HEIGHT_IMG)
 
 
@@ -133,22 +133,8 @@ class plotter:
                                           title=t, height=1000, width=1000)
 
         fig.show()
-        # fig.write_html(''.join([GRAPH_DIR, name, "_histogram", ".html"]))
+        fig.write_html(''.join([GRAPH_DIR, name, "_histogram", ".html"]))
         fig.write_image(''.join([GRAPH_DIR, name, "_histogram", ".png"]), width=1000, height=1000)
-
-    
-    def heatmap(self, cname, y_actual, y_pred, acc, device, clf_svm):
-        activites=[ACT_DICT[key] for key in ACT_DICT]
-        cmatrix = metrics.confusion_matrix(y_actual, y_pred)
-        svm_data = ''.join([" (", "kernel=", str(clf_svm.kernel), ", C=", str(clf_svm.C), ", gamma=", str(clf_svm.gamma), "):"])
-        xlabel = ''.join([device, " SVM", svm_data, " Accuracy = ", str(round(acc,3)), "<br><br>Predicted Class"])
-        fig = px.imshow(cmatrix, text_auto=True, template=THEME, x=activites, y=activites,   
-                        labels={"x": xlabel, "y": "Actual Class", "color": "Guesses"}) 
-
-        fig.update_xaxes(side="top")
-        fig.show()
-        # fig.write_html(''.join([GRAPH_DIR, cname, ".html"]))
-        fig.write_image(''.join([GRAPH_DIR, cname, ".png"]), width=1000, height=1000)
 
 
     def plot_activity(self, act, graph, sensor, ylabel=""):
@@ -196,7 +182,10 @@ class plotter:
         print("SVM accuracy: ", acc)
 
         pickle.dump(clf, open(model_name, 'wb'))
-        self.heatmap(cname, y_test, y_predict_svm, acc, device, clf)
+        confusion = metrics.confusion_matrix(y_test, y_predict_svm)
+        svm_data = ''.join([" (", "kernel=", str(clf.kernel), ", C=", str(clf.C), ", gamma=", str(clf.gamma), "):"])
+        t = ''.join([device, " SVM", svm_data, " Accuracy = ", str(round(acc,3)), "<br><br>Predicted Class"])
+        self.heatmap(confusion, cname, t)
 
 
     def run_svm_model(self, cname, device, model_file):
@@ -211,16 +200,16 @@ class plotter:
             sys.exit(0)
 
 
-    def heatmap_model(self, device, confusion, accuracy):
+    def heatmap(self, confusion, name, title):
         activites=[ACT_DICT[key] for key in ACT_DICT]
-        xlabel = ''.join([device, " Neural Network:", " Accuracy = ", str(round(accuracy,3)), "<br><br>Predicted Class"])
         fig = px.imshow(confusion, text_auto=True, template=THEME, x=activites, y=activites,   
-                        labels={"x": xlabel, "y": "Actual Class", "color": "Guesses"}) 
+                        labels={"x": title, "y": "Actual Class", "color": "Guesses"}) 
 
         fig.update_xaxes(side="top")
         fig.show()
-        fig.write_html(''.join([GRAPH_DIR, "confusion_matrix_neural_net_", device, ".html"]))
-        fig.write_image(''.join([GRAPH_DIR, "confusion_matrix_neural_net_", device, ".png"]), width=1000, height=1000)
+
+        fig.write_html(''.join([GRAPH_DIR, name, ".html"]))
+        fig.write_image(''.join([GRAPH_DIR, name, ".png"]), width=1000, height=1000)
 
 
     def graph_model(self, df_history, metrics, var, t, newnames, device):
@@ -320,7 +309,9 @@ class plotter:
         self.graph_model(df_history, ["loss", "val_loss"], "Loss", ''.join([device, " Model Loss"]), rename, device)
 
         confusion = tf.math.confusion_matrix(labels=np.argmax(outputs_test, axis=1), predictions=np.argmax(pred, axis=1), num_classes=len(ACT_DICT))
-        self.heatmap_model(device, confusion, acc)
+        file_name = ''.join(["confusion_matrix_neural_net_", device])
+        t = ''.join([device, " Neural Network:", " Accuracy = ", str(round(acc,3)), "<br><br>Predicted Class"])
+        self.heatmap(confusion, file_name, t)
 
 
 def main():
