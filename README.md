@@ -71,9 +71,12 @@ https://archive.ics.uci.edu/ml/datasets/WISDM+Smartphone+and+Smartwatch+Activity
 
 # References  
 
+## Arduino Tiny ML tutorial for gesture recognition  
 https://colab.research.google.com/github/arduino/ArduinoTensorFlowLiteTutorials/blob/master/GestureToEmoji/arduino_tinyml_workshop.ipynb  
 
 https://blog.tensorflow.org/2019/11/how-to-get-started-with-machine.html  
+
+## Helpful links  
 
 https://towardsdatascience.com/understanding-the-confusion-matrix-from-scikit-learn-c51d88929c79  
 
